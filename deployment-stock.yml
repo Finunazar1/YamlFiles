@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: stock-deploy
+spec:
+    selector:
+        matchLabels:
+            app: stock-pod
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: stock-pod
+        spec:
+            imagePullSecrets:
+            - name: acr-secret
+            containers:
+            - name: stock-container
+              image: estockmarketacs.azurecr.io/esmstockservice:latest
+              imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: stock-service
+spec:
+    selector:
+        app: stock-pod
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
